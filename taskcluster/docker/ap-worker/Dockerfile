@@ -14,7 +14,7 @@ ARG DOCKER_SRC
 
 ENV UV_PYTHON_DOWNLOADS=0
 
-ENV BASE_COMMIT=f04b3a3457efbca6fde29beaf70c7f7f0016cdc8
+ENV BASE_COMMIT=799e0b7b0fa3c965995a6288c651d2f4d800e4ff
 ENV FUZZER_COMMIT=17227d793cc1088ae9be5fe97421e73bb683efdf
 ENV LINTER_COMMIT=52cfa67f7e40ebe15bf6bff6d17adb6409ad97dc
 
@@ -32,8 +32,15 @@ FROM python:${PYTHON_VERSION}-slim-trixie
 ARG DOCKER_SRC
 
 RUN apt update && apt install -y curl libtk8.6 libpq5
-RUN curl -fsSL https://github.com/watchexec/watchexec/releases/download/cli-v1.20.5/watchexec-1.20.5-x86_64-unknown-linux-gnu.deb -o /tmp/watchexec.deb
-RUN dpkg -i /tmp/watchexec.deb
+RUN ARCH=$(dpkg --print-architecture) && \
+    case "$ARCH" in \
+        amd64) WATCHEXEC_ARCH="x86_64-unknown-linux-gnu" ;; \
+        arm64) WATCHEXEC_ARCH="aarch64-unknown-linux-gnu" ;; \
+        *) echo "Unsupported arch: $ARCH" && exit 1 ;; \
+    esac && \
+    curl -fsSL "https://github.com/watchexec/watchexec/releases/download/v2.5.1/watchexec-2.5.1-${WATCHEXEC_ARCH}.deb" -o /tmp/watchexec.deb && \
+    dpkg -i /tmp/watchexec.deb && \
+    rm /tmp/watchexec.deb
 
 RUN mkdir /ap
 WORKDIR /ap

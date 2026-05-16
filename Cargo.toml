@@ -10,13 +10,12 @@ members = [
 ]
 
 [patch.crates-io]
-figment = { git = "https://github.com/Eijebong/Figment.git" }
-rocket = { git = "https://github.com/Eijebong/Rocket.git", branch = "0.6.0-dev" }
-rocket_ws = { git = "https://github.com/Eijebong/Rocket.git", branch = "0.6.0-dev" }
-rocket_prometheus = { git = "https://github.com/Eijebong/rocket_prometheus.git", branch = "0.6.0-dev" }
-rocket_oauth2 = { git = "https://github.com/Eijebong/rocket_oauth2.git" }
-sentry-tracing = { git = "http://github.com/Eijebong/sentry-rust.git" }
-sentry = { git = "http://github.com/Eijebong/sentry-rust.git" }
+figment = { git = "https://github.com/SergioBenitez/Figment.git", rev = "556d76adb6224b09e8d6e6b53315f7fc728eb45a" }
+rocket = { git = "https://github.com/rwf2/Rocket.git", rev = "b22271f2cf0508f3d90a29adb7c3c3d717013a11" }
+rocket_ws = { git = "https://github.com/rwf2/Rocket.git", rev = "b22271f2cf0508f3d90a29adb7c3c3d717013a11" }
+rocket_prometheus = { git = "https://github.com/sd2k/rocket_prometheus.git", rev = "1994f260d4d972c799233d3b049446ab908ebfad" }
+sentry-tracing = { git = "https://github.com/getsentry/sentry-rust.git", rev = "9a62912475a227589028ba726553a37f9382672e" }
+sentry = { git = "https://github.com/getsentry/sentry-rust.git", rev = "9a62912475a227589028ba726553a37f9382672e" }
 
 [profile.dev.package."*"]
 opt-level = 3

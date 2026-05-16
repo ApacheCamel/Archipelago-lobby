@@ -6,15 +6,17 @@ BASE_COMMIT=$1
 FUZZER_COMMIT=$2
 LINTER_COMMIT=$3
 
-apt update && apt -y install git zip curl clang python3-dev python3-tk libpq5
+apt update && apt -y install git zip curl clang python3-dev python3-tk libpq5 cmake
 
 mkdir -p /ap/archipelago
 cd /ap/archipelago
 
 git init
-git remote add origin https://github.com/Eijebong/Archipelago.git
+git remote add origin https://github.com/ArchipelagoMW/Archipelago.git
 git fetch origin ${BASE_COMMIT} --depth 1
 git reset --hard ${BASE_COMMIT}
+
+mkdir -p /ap/archipelago/Players
 
 uv venv
 uv export --project=/ap/ap-worker/pyproject.toml --locked | uv pip install -r -

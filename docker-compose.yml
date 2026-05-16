@@ -44,13 +44,14 @@ services:
       - ./tmp/gen-output:/builds/gen-output
       - cargo:/builds/cargo
     environment:
+      HOME: /tmp
       CARGO_HOME: /builds/cargo
       CARGO_TARGET_DIR: /builds/target
       DATABASE_URL: postgres://postgres:postgres@postgres:5432/aplobby
       VALKEY_URL: redis://valkey:6379?protocol=resp3
       APWORLDS_INDEX_DIR: /builds/apworlds_index
       APWORLDS_PATH: /builds/apworlds_index/worlds
-      APWORLDS_INDEX_REPO_URL: https://github.com/Eijebong/Archipelago-index.git
+      APWORLDS_INDEX_REPO_URL: https://github.com/ApacheCamel/Archipelago-index.git
       RUST_LOG: debug
       YAML_VALIDATION_QUEUE_TOKEN: changeme
       GENERATION_QUEUE_TOKEN: changeme
@@ -61,8 +62,10 @@ services:
       GENERATION_OUTPUT_DIR: "/builds/gen-output"
       ROCKET_ADDRESS: "0.0.0.0"
     working_dir: /builds/worker/checkout
-    command: sh -c "watchexec -w lobby -w Cargo.toml -w Cargo.lock -w Rocket.toml -w apwm -w wq -r cargo run"
+    command: sh -c "watchexec --poll 500ms -w lobby -w Cargo.toml -w Cargo.lock -w Rocket.toml -w apwm -w wq -r cargo run"
     user: "${USER_ID}:${GID}"
+    security_opt:
+      - seccomp:unconfined
     depends_on:
       vol-setup:
         condition: service_completed_successfully
@@ -92,9 +95,10 @@ services:
     working_dir: /ap/archipelago
     user: "${USER_ID}:${GID}"
     environment:
+      HOME: /tmp
       LOBBY_ROOT_URL: http://lobby:8000
       YAML_VALIDATION_QUEUE_TOKEN: changeme
-    command: watchexec -w /ap/ap-worker -r /ap/archipelago/.venv/bin/python3 check_wq.py /ap/supported_worlds /ap/index/worlds/
+    command: watchexec --poll 500ms -w /ap/ap-worker -r /ap/archipelago/.venv/bin/python3 check_wq.py /ap/supported_worlds /ap/index/worlds/
     depends_on:
       lobby:
         condition: service_healthy
@@ -113,11 +117,12 @@ services:
     working_dir: /ap/archipelago
     user: "${USER_ID}:${GID}"
     environment:
+      HOME: /tmp
       LOBBY_ROOT_URL: http://lobby:8000
       GENERATION_QUEUE_TOKEN: changeme
       GENERATOR_OUTPUT_DIR: /ap/builds-output
       LOBBY_API_KEY: changeme
-    command: watchexec -w /ap/ap-worker -r /ap/archipelago/.venv/bin/python3 gen_wq.py /ap/supported_worlds /ap/index/worlds/
+    command: watchexec --poll 500ms -w /ap/ap-worker -r /ap/archipelago/.venv/bin/python3 gen_wq.py /ap/supported_worlds /ap/index/worlds/
     depends_on:
       lobby:
         condition: service_healthy
@@ -135,9 +140,10 @@ services:
     working_dir: /ap/archipelago
     user: "${USER_ID}:${GID}"
     environment:
+      HOME: /tmp
       LOBBY_ROOT_URL: http://lobby:8000
       OPTIONS_GEN_QUEUE_TOKEN: changeme
-    command: watchexec -w /ap/ap-worker -r /ap/archipelago/.venv/bin/python3 options_gen_wq.py /ap/supported_worlds /ap/index/worlds/
+    command: watchexec --poll 500ms -w /ap/ap-worker -r /ap/archipelago/.venv/bin/python3 options_gen_wq.py /ap/supported_worlds /ap/index/worlds/
     depends_on:
       lobby:
         condition: service_healthy
